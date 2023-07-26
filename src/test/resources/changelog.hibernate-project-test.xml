@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="1" author="a.sherstneva">
+        <sql>
+            SET FOREIGN_KEY_CHECKS = 0;
+        </sql>
+    </changeSet>
+
+    <changeSet id="2" author="a.sherstneva">
+        <sql>
+            CREATE TABLE IF NOT EXISTS instructor_details (
+                id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                youtube_channel VARCHAR(128) DEFAULT NULL
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="3" author="a.sherstneva">
+        <sql>
+            INSERT INTO instructor_details (youtube_channel)
+            VALUES ("https://www.youtube.com/@third"),
+                   ("https://www.youtube.com/@first"),
+                   ("https://www.youtube.com/@second")
+        </sql>
+    </changeSet>
+
+    <changeSet id="4" author="a.sherstneva">
+        <sql>
+            CREATE TABLE IF NOT EXISTS instructor (
+                id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                first_name VARCHAR(15) NOT NULL,
+                last_name VARCHAR(20) NOT NULL,
+                instructor_details_id INT(11) DEFAULT NULL,
+                FOREIGN KEY (instructor_details_id) REFERENCES instructors_details(id)
+                ON DELETE NO ACTION ON UPDATE NO ACTION
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="5" author="a.sherstneva">
+        <sql>
+            INSERT INTO instructor (first_name, last_name, instructor_details_id)
+            VALUES ("First", "Instructor", 2), ("Second", "Instructor", 3), ("Third", "Instructor", 1)
+        </sql>
+    </changeSet>
+
+    <changeSet id="6" author="a.sherstneva">
+        <sql>
+            CREATE TABLE IF NOT EXISTS course (
+                id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                title VARCHAR(128) DEFAULT NULL,
+                instructor_id INT(11) DEFAULT NULL,
+                FOREIGN KEY (instructor_id) REFERENCES instrustor(id)
+                ON DELETE NO ACTION ON UPDATE NO ACTION
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="7" author="a.sherstneva">
+        <sql>
+            INSERT INTO course (title, instructor_id)
+            VALUES ("Pretty Java Advanced course", 2),
+                   ("Spring Boot amazing course", 1),
+                   ("Yet another Java course", 3),
+                   ("Course about Unit Testing", 1),
+                   ("Spring - the full cource about all", 2),
+                   ("Full Stack developer course", 1)
+        </sql>
+    </changeSet>
+
+    <changeSet id="8" author="a.sherstneva">
+        <sql>
+            CREATE TABLE IF NOT EXISTS student (
+                id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                first_name VARCHAR(15) NOT NULL,
+                last_name VARCHAR(20) NOT NULL
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="9" author="a.sherstneva">
+        <sql>
+            INSERT INTO student (first_name, last_name)
+            VALUES ("First", "Student"), ("Second", "Student"), ("Third", "Student")
+        </sql>
+    </changeSet>
+
+    <changeSet id="10" author="a.sherstneva">
+        <sql>
+            CREATE TABLE IF NOT EXISTS course_student (
+                course_id INT UNSIGNED NOT NULL,
+                student_id INT UNSIGNED NOT NULL,
+                PRIMARY KEY (course_id, student_id),
+                FOREIGN KEY (course_id) REFERENCES course(id)
+                ON DELETE NO ACTION ON UPDATE NO ACTION,
+                FOREIGN KEY (student_id) REFERENCES student(id)
+                ON DELETE NO ACTION ON UPDATE NO ACTION
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="11" author="a.sherstneva">
+        <sql>
+            INSERT INTO course_student (course_id, student_id)
+            VALUES (4, 1), (5, 1), (1, 2), (6, 2), (2, 2), (2, 1)
+        </sql>
+    </changeSet>
+
+    <changeSet id="12" author="a.sherstneva">
+        <sql>
+            SET FOREIGN_KEY_CHECKS = 1;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
